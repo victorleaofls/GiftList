@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: haskell-postgres
+    environment:
+      POSTGRES_USER: haskads_user
+      POSTGRES_PASSWORD: haskads_password
+      POSTGRES_DB: haskads
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U haskads_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: haskell-api
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: haskads
+      DB_USER: haskads_user
+      DB_PASSWORD: haskads_password
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./migration.sql:/app/migration.sql
+
+volumes:
+  postgres_data:

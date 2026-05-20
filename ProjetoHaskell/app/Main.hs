@@ -18,12 +18,12 @@ main = do
     putStrLn "Servidor rodando na porta 8080"
 
     conn <- connectPostgreSQL
-      "host=dpg-d4f2e48gjchc73fjtkmg-a.oregon-postgres.render.com \
+      "host=postgres \
       \ port=5432 \
       \ dbname=haskads \
       \ user=haskads_user \
-      \ password=3zUjYzOhsaPLKnQaWeUGVcYIJl1uilDu \
-      \ sslmode=require"
+      \ password=haskads_password \
+      \ sslmode=disable"
 
     runMigration conn "migration.sql"
 
