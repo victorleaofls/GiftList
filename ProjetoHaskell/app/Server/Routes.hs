@@ -21,6 +21,7 @@ type API =
     :<|> "cliente" :> ReqBody '[JSON] Cliente :> Post '[JSON] ResultadoResponse 
     :<|> "cliente"  :> Verb 'OPTIONS 200 '[JSON] ()
     :<|> "clientes" :> Get '[JSON] ClienteResponse
+    :<|> "usuario" :> ReqBody '[JSON] Cliente :> Post '[JSON] ResultadoResponse
 
 handlerClienteTodos :: Connection -> Handler ClienteResponse
 handlerClienteTodos conn = do 
@@ -52,6 +53,7 @@ server conn = handlerHello
             :<|> handlerCliente conn 
             :<|> options 
             :<|> handlerClienteTodos conn
+            :<|> handlerCliente conn
 
 addCorsHeader :: Middleware
 addCorsHeader app' req resp =

@@ -2,15 +2,26 @@ FROM haskell:9.6.7 AS build
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y postgresql-server-dev-14 && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y gnupg curl && \
+    curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+    echo "deb http://apt.postgresql.org/pub/repos/apt $(grep VERSION_CODENAME /etc/os-release | cut -d= -f2)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+    apt-get update && \
+    apt-get install -y postgresql-client-14 libpq-dev build-essential pkg-config && \
+    rm -rf /var/lib/apt/lists/*
 
-COPY projetoHello.cabal cabal.project ./  
+COPY projetoHello.cabal cabal.project LICENSE ./
 
-RUN cabal update
+RUN cabal v2-update
+
+RUN mkdir -p app/Api app/Server && \
+    touch app/Main.hs app/Api/Model.hs app/Server/Routes.hs CHANGELOG.md
+
+RUN cabal v2-build --only-dependencies
 
 COPY . .
 
-RUN cabal build --enable-relocatable
+RUN cabal v2-build exe:projetoHello
 
 FROM debian:bookworm-slim
 
