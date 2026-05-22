@@ -19,6 +19,7 @@ common warnings
 executable projetoHello
     import:           warnings
     main-is:          Main.hs
+    ghc-options:      -threaded -with-rtsopts=-N
     other-modules:    Server.Routes
                       Api.Model
     -- other-extensions:

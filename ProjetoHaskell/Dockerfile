@@ -12,24 +12,32 @@ RUN apt-get update && \
 
 COPY projetoHello.cabal cabal.project LICENSE ./
 
-RUN cabal v2-update
+RUN --mount=type=cache,target=/root/.cabal \
+    --mount=type=cache,target=/root/.ghc \
+    cabal v2-update
 
 RUN mkdir -p app/Api app/Server && \
     touch app/Main.hs app/Api/Model.hs app/Server/Routes.hs CHANGELOG.md
 
-RUN cabal v2-build --only-dependencies
+RUN --mount=type=cache,target=/root/.cabal \
+    --mount=type=cache,target=/root/.ghc \
+    cabal v2-build --only-dependencies
 
 COPY . .
 
-RUN cabal v2-build exe:projetoHello
+RUN --mount=type=cache,target=/root/.cabal \
+    --mount=type=cache,target=/root/.ghc \
+    cabal v2-build exe:projetoHello
 
 FROM debian:bookworm-slim
 
-RUN apt-get update && apt-get install -y libgmp10 libpq5 && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y libgmp10 libpq5 && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-COPY --from=build /app/dist-newstyle/build/*/*/projetoHello-*/x/projetoHello/build/projetoHello .
+COPY --from=build /app/dist-newstyle/build/*/*/projetoHello-*/x/projetoHello/build/projetoHello/projetoHello .
 
 EXPOSE 8080
 
