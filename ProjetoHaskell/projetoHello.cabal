@@ -22,6 +22,10 @@ executable projetoHello
     ghc-options:      -threaded -with-rtsopts=-N
     other-modules:    Server.Routes
                       Api.Model
+                      Services.AuthService
+                      Handlers.HandlerLogin
+                      Handlers.HandlerCadastro
+                      Handlers.HandlerUsuario
     -- other-extensions:
     build-depends:    base,
                       servant,
@@ -32,6 +36,12 @@ executable projetoHello
                       wai,
                       postgresql-simple,
                       bytestring,
-                      mtl
+                      mtl,
+                      cryptonite,
+                      base64-bytestring,
+                      jwt,
+                      text,
+                      time,
+                      memory
     hs-source-dirs:   app
     default-language: Haskell2010

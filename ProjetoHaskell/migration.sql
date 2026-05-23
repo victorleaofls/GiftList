@@ -3,3 +3,12 @@ CREATE TABLE IF NOT EXISTS Cliente(
     nome VARCHAR(50) NOT NULL,
     cpf VARCHAR(11) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS Usuario(
+    id SERIAL PRIMARY KEY,
+    nome_completo VARCHAR(120) NOT NULL,
+    email VARCHAR(120) UNIQUE NOT NULL,
+    senha_hash TEXT NOT NULL,
+    senha_salt TEXT NOT NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

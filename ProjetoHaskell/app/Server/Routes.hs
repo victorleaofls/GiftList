@@ -7,12 +7,14 @@ module Server.Routes where
 import Api.Model
 import Data.Proxy
 import Network.Wai
-import Servant.API.Sub
 import Servant.API
 import Servant.Server
 import Database.PostgreSQL.Simple
 import Control.Monad.IO.Class
 import Control.Monad.Except
+import Handlers.HandlerCadastro
+import Handlers.HandlerLogin
+import Handlers.HandlerUsuario
 
 type API = 
          "hello" :> Get '[PlainText] String 
@@ -22,6 +24,11 @@ type API =
     :<|> "cliente"  :> Verb 'OPTIONS 200 '[JSON] ()
     :<|> "clientes" :> Get '[JSON] ClienteResponse
     :<|> "usuario" :> ReqBody '[JSON] Cliente :> Post '[JSON] ResultadoResponse
+    :<|> "usuario" :> Capture "id" Int :> Header "Authorization" String :> Get '[JSON] UsuarioResponse
+    :<|> "cadastro" :> ReqBody '[JSON] CadastroRequest :> Post '[JSON] CadastroResponse
+    :<|> "cadastro" :> Verb 'OPTIONS 200 '[JSON] ()
+    :<|> "login" :> ReqBody '[JSON] LoginRequest :> Post '[JSON] TokenResponse
+    :<|> "login" :> Verb 'OPTIONS 200 '[JSON] ()
 
 handlerClienteTodos :: Connection -> Handler ClienteResponse
 handlerClienteTodos conn = do 
@@ -53,7 +60,12 @@ server conn = handlerHello
             :<|> handlerCliente conn 
             :<|> options 
             :<|> handlerClienteTodos conn
-            :<|> handlerCliente conn
+            :<|> handlerCliente conn            
+            :<|> handlerGetUsuario conn            
+            :<|> handlerCadastro conn
+            :<|> options
+            :<|> handlerLogin conn
+            :<|> options
 
 addCorsHeader :: Middleware
 addCorsHeader app' req resp =
