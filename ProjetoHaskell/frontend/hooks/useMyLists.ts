@@ -1,0 +1,61 @@
+import { useEffect, useState } from "react"
+
+import { getMyLists } from "@/services/listsService"
+import type { GiftList } from "@/types/list"
+
+export type MyListSummary = {
+  id: string
+  name: string
+  desc: string
+  createdAt: string
+  itemsCount: number
+  raised: number
+  total: number
+}
+
+const toSummary = (list: GiftList): MyListSummary => {
+  const total = list.items.reduce((sum, item) => sum + item.price, 0)
+  const raised = list.items.reduce((sum, item) => sum + item.raised, 0)
+
+  return {
+    id: list.id,
+    name: list.name,
+    desc: list.desc,
+    createdAt: list.createdAt ?? "",
+    itemsCount: list.items.length,
+    raised,
+    total,
+  }
+}
+
+export function useMyLists() {
+  const [data, setData] = useState<MyListSummary[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let active = true
+    setIsLoading(true)
+
+    getMyLists()
+      .then((lists) => {
+        if (!active) return
+        setData(lists.map(toSummary))
+        setError(null)
+      })
+      .catch(() => {
+        if (!active) return
+        setError("Nao foi possivel carregar suas listas.")
+      })
+      .finally(() => {
+        if (!active) return
+        setIsLoading(false)
+      })
+
+    return () => {
+      active = false
+    }
+  }, [])
+
+  return { data, isLoading, error }
+}
