@@ -8,10 +8,11 @@ export type RegisterPayload = {
   lastName: string
   email: string
   password: string
+  confirmPassword: string
 }
 
 export type AuthUser = {
-  id: string
+  id: number
   name: string
   email: string
 }
