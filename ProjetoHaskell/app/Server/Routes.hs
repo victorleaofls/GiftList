@@ -25,6 +25,7 @@ type API =
     :<|> "clientes" :> Get '[JSON] ClienteResponse
     :<|> "usuario" :> ReqBody '[JSON] Cliente :> Post '[JSON] ResultadoResponse
     :<|> "usuario" :> Capture "id" Int :> Header "Authorization" String :> Get '[JSON] UsuarioResponse
+    :<|> "usuario" :> Capture "id" Int :> Verb 'OPTIONS 200 '[JSON] ()
     :<|> "cadastro" :> ReqBody '[JSON] CadastroRequest :> Post '[JSON] CadastroResponse
     :<|> "cadastro" :> Verb 'OPTIONS 200 '[JSON] ()
     :<|> "login" :> ReqBody '[JSON] LoginRequest :> Post '[JSON] TokenResponse
@@ -49,6 +50,9 @@ handlerSoma (Calculadora x y) = pure (ResultadoResponse $ x + y)
 options :: Handler ()
 options = pure ()
 
+optionsWithId :: Int -> Handler ()
+optionsWithId _ = options
+
 -- Handler eh uma Monada que tem IO embutido
 handlerHello :: Handler String 
 handlerHello = pure "Ola, mundo!"
@@ -62,6 +66,7 @@ server conn = handlerHello
             :<|> handlerClienteTodos conn
             :<|> handlerCliente conn            
             :<|> handlerGetUsuario conn            
+            :<|> optionsWithId
             :<|> handlerCadastro conn
             :<|> options
             :<|> handlerLogin conn

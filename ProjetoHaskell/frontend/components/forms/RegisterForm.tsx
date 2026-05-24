@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -37,6 +38,7 @@ type RegisterValues = z.infer<typeof registerSchema>
 export function RegisterForm() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const router = useRouter()
 
   const form = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
@@ -55,9 +57,11 @@ export function RegisterForm() {
 
     try {
       await register(values)
-      setSuccess("Conta criada. Voce ja pode entrar.")
-    } catch {
-      setError("Nao foi possivel criar sua conta.")
+      setSuccess("Conta criada. Redirecionando para o login...")
+      setTimeout(() => router.push("/login"), 800)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Nao foi possivel criar sua conta."
+      setError(message)
     }
   }
 

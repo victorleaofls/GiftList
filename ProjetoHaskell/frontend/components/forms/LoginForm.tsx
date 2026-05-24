@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -27,6 +28,7 @@ type LoginValues = z.infer<typeof loginSchema>
 export function LoginForm() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const router = useRouter()
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -43,8 +45,10 @@ export function LoginForm() {
     try {
       await login(values)
       setSuccess("Login realizado. Redirecionando...")
-    } catch {
-      setError("Email ou senha incorretos.")
+      setTimeout(() => router.push("/my-lists"), 600)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Email ou senha incorretos."
+      setError(message)
     }
   }
 
