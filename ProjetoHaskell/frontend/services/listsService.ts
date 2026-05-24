@@ -16,7 +16,7 @@ const lists: GiftList[] = [
         name: "Jogo de Panelas Tramontina",
         price: 499.9,
         raised: 350,
-        image: null,
+        image: "https://http2.mlstatic.com/D_NQ_NP_2X_830593-MLA101346321113_122025-F.webp",
       },
       {
         id: "ITEM-002",

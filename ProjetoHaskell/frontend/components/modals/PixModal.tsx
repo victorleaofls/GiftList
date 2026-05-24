@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import type { GiftItem } from "@/types/list"
+import { Minus, Plus } from "lucide-react"
 
 const pixSchema = z.object({
   amount: z.coerce.number().min(1, "Informe um valor maior que zero."),
@@ -44,7 +45,7 @@ const formatMoney = (value: number) =>
 export function PixModal({ open, onOpenChange, item, onConfirm }: PixModalProps) {
   const remaining = useMemo(() => {
     if (!item) return 0
-    return Math.max(0, item.price - item.raised)
+    return Number(Math.max(0, item.price - item.raised).toFixed(2))
   }, [item])
 
   const form = useForm<PixValues>({
@@ -90,20 +91,62 @@ export function PixModal({ open, onOpenChange, item, onConfirm }: PixModalProps)
                 <FormItem>
                   <FormLabel>Valor da contribuicao</FormLabel>
                   <FormControl>
-                    <Input type="number" min="1" step="0.01" {...field} />
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon-sm"
+                        aria-label="Diminuir valor"
+                        onClick={() => {
+                          const current = Number(field.value) || 0
+                          field.onChange(Math.max(1, current - 1))
+                        }}
+                      >
+                        <Minus />
+                      </Button>
+                      <Input
+                        type="number"
+                        min="1"
+                        step="0.01"
+                        className="text-center rounded-full"
+                        {...field}
+                      />
+                      <Button
+                        type="button"
+                        size="icon-sm"
+                        aria-label="Aumentar valor"
+                        onClick={() => {
+                          const current = Number(field.value) || 0
+                          field.onChange(Math.max(1, current + 1))
+                        }}
+                      >
+                        <Plus />
+                      </Button>
+                    </div>
                   </FormControl>
+                  <div className="flex justify-center flex-wrap gap-2">
+                    {[5, 10, 25, 50].map((value) => (
+                      <Button
+                        key={value}
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="rounded-full"
+                        onClick={() => field.onChange(value)}
+                      >
+                        {formatMoney(value)}
+                      </Button>
+                    ))}
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <div className="rounded-lg border border-border bg-background p-3 text-xs text-muted-foreground">
-              Chave Pix: presentea@pix.com
-            </div>
             <DialogFooter>
               <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
                 Cancelar
               </Button>
-              <Button type="submit">Copiar chave Pix</Button>
+              <Button type="submit">Presentear!</Button>
             </DialogFooter>
           </form>
         </Form>

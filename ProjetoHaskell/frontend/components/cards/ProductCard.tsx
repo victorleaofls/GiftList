@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import type { GiftItem } from "@/types/list"
+import Image from "next/image"
 
 const formatMoney = (value: number) =>
   value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
@@ -17,8 +18,20 @@ export function ProductCard({ item, onContribute }: ProductCardProps) {
 
   return (
     <Card className="h-full overflow-hidden">
-      <div className="flex h-36 items-center justify-center bg-muted text-base font-semibold text-muted-foreground">
-        {item.name.charAt(0)}
+      <div className="flex h-46 items-center justify-center bg-muted text-base font-semibold text-muted-foreground overflow-hidden">
+        {item.image ? (
+          
+            <Image 
+              src={item.image}
+              alt={item.name}
+              width={400}
+              height={200}
+              className="aspect-video"
+            />
+          ):(
+            <p>
+              {item.name.charAt(0)}
+            </p>)}
       </div>
       <CardContent className="space-y-3 pt-4">
         <div>

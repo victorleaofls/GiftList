@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react"
 
-import Link from "next/link"
-
 import { MyListCard } from "@/components/cards/MyListCard"
 import { Toast } from "@/components/feedback/Toast"
 import { TopNav } from "@/components/layout/TopNav"
@@ -12,11 +10,13 @@ import { Button } from "@/components/ui/button"
 import { useMyLists, type MyListSummary } from "@/hooks/useMyLists"
 import { useToast } from "@/hooks/useToast"
 import { deleteList } from "@/services/listsService"
+import { CreateListModal } from "@/components/modals/CreateListModal"
 
 export default function MyListsPage() {
   const { data, isLoading, error } = useMyLists()
   const [lists, setLists] = useState<MyListSummary[]>([])
   const [deleteTarget, setDeleteTarget] = useState<MyListSummary | null>(null)
+  const [createOpen, setCreateOpen] = useState(false)
   const { toast, showToast } = useToast()
 
   useEffect(() => {
@@ -49,8 +49,8 @@ export default function MyListsPage() {
               Gerencie suas listas de presentes criadas.
             </p>
           </div>
-          <Button asChild>
-            <Link href="/create-list">+ Nova lista</Link>
+          <Button type="button" onClick={() => setCreateOpen(true)}>
+            + Nova lista
           </Button>
         </header>
         {isLoading ? (
@@ -63,8 +63,8 @@ export default function MyListsPage() {
             <p className="text-sm text-muted-foreground">
               Crie sua primeira lista de presentes.
             </p>
-            <Button asChild className="mt-4">
-              <Link href="/create-list">Criar primeira lista</Link>
+            <Button className="mt-4" onClick={() => setCreateOpen(true)}>
+              Criar primeira lista
             </Button>
           </div>
         ) : null}
@@ -74,6 +74,7 @@ export default function MyListsPage() {
           ))}
         </div>
       </main>
+      <CreateListModal open={createOpen} onOpenChange={setCreateOpen} />
       <ConfirmDeleteModal
         open={!!deleteTarget}
         onOpenChange={(open) => {
