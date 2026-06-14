@@ -6,7 +6,6 @@ import Link from "next/link"
 
 import { MyListCard } from "@/components/cards/MyListCard"
 import { Toast } from "@/components/feedback/Toast"
-import { TopNav } from "@/components/layout/TopNav"
 import { ConfirmDeleteModal } from "@/components/modals/ConfirmDeleteModal"
 import { Button } from "@/components/ui/button"
 import { useMyLists, type MyListSummary } from "@/hooks/useMyLists"
@@ -51,15 +50,6 @@ export default function MyListsPage() {
 
   return (
     <div className="min-h-screen bg-[var(--surface-warm)]">
-      <TopNav
-        links={[
-          { href: "/search", label: "Buscar listas" },
-          { href: "/create-list", label: "Criar lista" },
-        ]}
-        user={user}
-        onLogout={user ? logout : undefined}
-        action={user ? undefined : { href: "/login", label: "Entrar", variant: "secondary" }}
-      />
       <main className="mx-auto max-w-[var(--container-max)] space-y-8 px-4 py-10 sm:px-6">
         <header className="flex flex-wrap items-center justify-between gap-4">
           <div>

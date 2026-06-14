@@ -4,7 +4,6 @@ import Link from "next/link"
 
 import { FeatureCard } from "@/components/cards/FeatureCard"
 import { ScreenCard, type ScreenCardProps } from "@/components/cards/ScreenCard"
-import { TopNav } from "@/components/layout/TopNav"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/useAuth"
 
@@ -83,15 +82,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <TopNav
-        links={[
-          { href: "/search", label: "Buscar listas" },
-          { href: "/my-lists", label: "Minhas listas" },
-        ]}
-        user={user}
-        onLogout={user ? logout : undefined}
-        action={user ? undefined : { href: "/login", label: "Entrar" }}
-      />
       <main>
         <section className="relative overflow-hidden bg-[radial-gradient(circle_at_top,#fff4d8,#ffffff_55%)]">
           <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-10 px-4 py-16 sm:px-6 lg:flex-row lg:items-center lg:justify-between">

@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation"
 
 import { ListForm, buildListPayload } from "@/components/forms/ListForm"
 import { Toast } from "@/components/feedback/Toast"
-import { TopNav } from "@/components/layout/TopNav"
 import type { ListFormValues } from "@/components/forms/ListForm"
 import { useList } from "@/hooks/useList"
 import { useToast } from "@/hooks/useToast"
@@ -58,7 +57,6 @@ function EditListContent() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[var(--surface-warm)]">
-        <TopNav backLink={{ href: "/my-lists", label: "Voltar para minhas listas" }} />
         <main className="mx-auto max-w-3xl px-4 py-10 text-sm text-muted-foreground">
           Carregando lista...
         </main>
@@ -69,7 +67,6 @@ function EditListContent() {
   if (error || !data) {
     return (
       <div className="min-h-screen bg-[var(--surface-warm)]">
-        <TopNav backLink={{ href: "/my-lists", label: "Voltar para minhas listas" }} />
         <main className="mx-auto max-w-3xl px-4 py-10 text-sm text-destructive">
           {error ?? "Lista nao encontrada."}
         </main>
@@ -79,7 +76,6 @@ function EditListContent() {
 
   return (
     <div className="min-h-screen bg-[var(--surface-warm)]">
-      <TopNav backLink={{ href: "/my-lists", label: "Voltar para minhas listas" }} />
       <main className="mx-auto max-w-3xl space-y-8 px-4 py-10 sm:px-6">
         <header className="space-y-2">
           <h1 className="text-3xl font-semibold">Editar lista</h1>

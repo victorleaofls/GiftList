@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { TopNavWrapper } from "@/components/layout/TopNavWrapper";
 
 export const metadata: Metadata = {
   title: "Presentea",
@@ -16,7 +17,10 @@ export default function RootLayout({
       lang="pt-BR"
       className="h-full antialiased"
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <TopNavWrapper />
+        {children}
+      </body>
     </html>
   );
 }

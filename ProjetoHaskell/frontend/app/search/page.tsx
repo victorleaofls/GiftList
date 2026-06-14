@@ -5,7 +5,6 @@ import { Search } from "lucide-react"
 
 import { PublicListCard } from "@/components/cards/PublicListCard"
 import { Toast } from "@/components/feedback/Toast"
-import { TopNav } from "@/components/layout/TopNav"
 import { QrCodeModal } from "@/components/modals/QrCodeModal"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -44,15 +43,6 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-screen bg-[var(--surface-warm)]">
-      <TopNav
-        links={[
-          { href: "/my-lists", label: "Minhas listas" },
-          { href: "/create-list", label: "Criar lista" },
-        ]}
-        user={user}
-        onLogout={user ? logout : undefined}
-        action={user ? undefined : { href: "/login", label: "Entrar", variant: "secondary" }}
-      />
       <main className="mx-auto max-w-[var(--container-max)] space-y-8 px-4 py-10 sm:px-6">
         <header className="space-y-2">
           <h1 className="text-3xl font-semibold">Buscar listas de presentes</h1>

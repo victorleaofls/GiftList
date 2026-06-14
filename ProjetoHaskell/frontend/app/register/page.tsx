@@ -1,16 +1,11 @@
 import Link from "next/link"
 
 import { RegisterForm } from "@/components/forms/RegisterForm"
-import { TopNav } from "@/components/layout/TopNav"
 import { Gift } from "lucide-react"
 
 export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-background">
-      <TopNav
-        links={[{ href: "/search", label: "Buscar listas" }]}
-        action={{ href: "/login", label: "Entrar", variant: "secondary" }}
-      />
       <main className="grid min-h-[calc(100vh-80px)] grid-cols-1 lg:grid-cols-2">
         <section className="flex items-center justify-center px-4 py-12">
           <div className="w-full max-w-md space-y-6">

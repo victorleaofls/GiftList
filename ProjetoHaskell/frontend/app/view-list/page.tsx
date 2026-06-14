@@ -6,7 +6,6 @@ import { Copy, QrCode } from "lucide-react"
 
 import { ProductCard } from "@/components/cards/ProductCard"
 import { Toast } from "@/components/feedback/Toast"
-import { TopNav } from "@/components/layout/TopNav"
 import { PixModal } from "@/components/modals/PixModal"
 import { QrCodeModal } from "@/components/modals/QrCodeModal"
 import { Badge } from "@/components/ui/badge"
@@ -117,7 +116,6 @@ function ViewListContent() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
-        <TopNav links={[{ href: "/search", label: "Buscar listas" }]} />
         <main className="mx-auto max-w-[var(--container-max)] px-4 py-10 text-sm text-muted-foreground">
           Carregando lista...
         </main>
@@ -128,7 +126,6 @@ function ViewListContent() {
   if (error || !currentList) {
     return (
       <div className="min-h-screen bg-background">
-        <TopNav links={[{ href: "/search", label: "Buscar listas" }]} />
         <main className="mx-auto max-w-[var(--container-max)] px-4 py-10 text-sm text-destructive">
           {error ?? "Lista nao encontrada."}
         </main>
@@ -138,13 +135,6 @@ function ViewListContent() {
 
   return (
     <div className="min-h-screen bg-background">
-      <TopNav
-        links={[
-          { href: "/search", label: "Buscar listas" },
-          { href: "/my-lists", label: "Minhas listas" },
-        ]}
-        action={{ href: "/login", label: "Entrar", variant: "secondary" }}
-      />
       <main className="mx-auto max-w-[var(--container-max)] space-y-8 px-4 py-10 sm:px-6">
         <section className="grid gap-6 lg:grid-cols-[2fr,1fr]">
           <div className="space-y-4">
@@ -171,13 +161,13 @@ function ViewListContent() {
             </div>
           </div>
           <div className="rounded-2xl border border-border bg-background p-6 shadow-sm">
-            <p className="text-xs font-semibold uppercase text-muted-foreground">
-              Arrecadacao
-            </p>
-            <p className="mt-2 text-3xl font-semibold">{formatMoney(stats.raised)}</p>
-            <p className="text-sm text-muted-foreground">
-              de {formatMoney(stats.total)} ({stats.progress}%)
-            </p>
+                <p className="text-xs font-semibold uppercase text-muted-foreground">
+                  Arrecadacao
+                </p>
+                <p className="mt-2 text-3xl font-semibold">{formatMoney(stats.raised)}</p>
+                <p className="text-sm text-muted-foreground">
+                  de {formatMoney(stats.total)} ({stats.progress}%)
+                </p>
             <div className="mt-4 rounded-full bg-muted">
               <div
                 className="h-2 rounded-full bg-primary"
