@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 
 import { getMyLists } from "@/services/listsService"
+import { getApiErrorMessage } from "@/lib/errors"
 import type { GiftList } from "@/types/list"
 
 export type MyListSummary = {
@@ -44,9 +45,9 @@ export function useMyLists() {
         if (!active) return
         setData(lists.map(toSummary))
         setError(null)
-      } catch {
+      } catch (err) {
         if (!active) return
-        setError("Nao foi possivel carregar suas listas.")
+        setError(getApiErrorMessage(err))
       } finally {
         if (!active) return
         setIsLoading(false)

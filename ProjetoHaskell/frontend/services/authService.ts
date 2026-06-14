@@ -108,5 +108,12 @@ export async function register(payload: RegisterPayload): Promise<AuthUser> {
   }
 
   setStoredUser(user)
+
+  try {
+    await login({ email: payload.email, password: payload.password })
+  } catch {
+    // silencioso - usuario pode logar manualmente depois
+  }
+
   return user
 }

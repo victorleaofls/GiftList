@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { login } from "@/services/authService"
+import { getApiErrorMessage } from "@/lib/errors"
 
 const loginSchema = z.object({
   email: z.string().email("Informe um email valido."),
@@ -47,7 +48,7 @@ export function LoginForm() {
       setSuccess("Login realizado. Redirecionando...")
       setTimeout(() => router.push("/my-lists"), 600)
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Email ou senha incorretos."
+      const message = getApiErrorMessage(err)
       setError(message)
     }
   }

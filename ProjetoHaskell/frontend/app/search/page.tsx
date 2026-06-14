@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import { useDebouncedValue } from "@/hooks/useDebouncedValue"
 import { useLists, type PublicListSummary } from "@/hooks/useLists"
 import { useToast } from "@/hooks/useToast"
+import { useAuth } from "@/hooks/useAuth"
 
 const buildLink = (id: string) => {
   if (typeof window === "undefined") {
@@ -21,6 +22,7 @@ const buildLink = (id: string) => {
 }
 
 export default function SearchPage() {
+  const { user, logout } = useAuth()
   const [query, setQuery] = useState("")
   const debounced = useDebouncedValue(query, 300)
   const { data, isLoading, error } = useLists(debounced)
@@ -47,7 +49,9 @@ export default function SearchPage() {
           { href: "/my-lists", label: "Minhas listas" },
           { href: "/create-list", label: "Criar lista" },
         ]}
-        action={{ href: "/login", label: "Entrar", variant: "secondary" }}
+        user={user}
+        onLogout={user ? logout : undefined}
+        action={user ? undefined : { href: "/login", label: "Entrar", variant: "secondary" }}
       />
       <main className="mx-auto max-w-[var(--container-max)] space-y-8 px-4 py-10 sm:px-6">
         <header className="space-y-2">

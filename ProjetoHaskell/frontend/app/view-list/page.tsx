@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { Suspense, useEffect, useMemo, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { Copy, QrCode } from "lucide-react"
 
@@ -27,6 +27,14 @@ const buildLink = (id: string) => {
 }
 
 export default function ViewListPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background"><p className="p-10 text-sm text-muted-foreground">Carregando...</p></div>}>
+      <ViewListContent />
+    </Suspense>
+  )
+}
+
+function ViewListContent() {
   const searchParams = useSearchParams()
   const listId = searchParams.get("id") ?? "PRE-001"
   const { data, isLoading, error } = useList(listId)
@@ -207,3 +215,6 @@ export default function ViewListPage() {
     </div>
   )
 }
+
+
+

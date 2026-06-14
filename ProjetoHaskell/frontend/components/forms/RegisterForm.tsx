@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { register } from "@/services/authService"
+import { getApiErrorMessage } from "@/lib/errors"
 
 const registerSchema = z
   .object({
@@ -57,10 +58,10 @@ export function RegisterForm() {
 
     try {
       await register(values)
-      setSuccess("Conta criada. Redirecionando para o login...")
-      setTimeout(() => router.push("/login"), 800)
+      setSuccess("Conta criada! Redirecionando...")
+      setTimeout(() => router.push("/my-lists"), 600)
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Nao foi possivel criar sua conta."
+      const message = getApiErrorMessage(err)
       setError(message)
     }
   }

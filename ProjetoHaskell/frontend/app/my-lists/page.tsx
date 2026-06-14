@@ -11,10 +11,12 @@ import { ConfirmDeleteModal } from "@/components/modals/ConfirmDeleteModal"
 import { Button } from "@/components/ui/button"
 import { useMyLists, type MyListSummary } from "@/hooks/useMyLists"
 import { useToast } from "@/hooks/useToast"
+import { useAuth } from "@/hooks/useAuth"
 import { deleteList } from "@/services/listsService"
-import { clearAuthToken } from "@/lib/api"
+import { getApiErrorMessage } from "@/lib/errors"
 
 export default function MyListsPage() {
+  const { user, logout } = useAuth()
   const { data, isLoading, error } = useMyLists()
   const [lists, setLists] = useState<MyListSummary[]>([])
   const [deleteTarget, setDeleteTarget] = useState<MyListSummary | null>(null)
@@ -42,16 +44,8 @@ export default function MyListsPage() {
       setLists((prev) => prev.filter((list) => list.id !== deleteTarget.id))
       showToast("Lista excluida.", "success")
       setDeleteTarget(null)
-    } catch {
-      showToast("Nao foi possivel excluir a lista.", "danger")
-    }
-  }
-
-  const handleLogout = () => {
-    clearAuthToken()
-    if (typeof window !== "undefined") {
-      window.localStorage.removeItem("giftlist_user")
-      window.location.href = "/login"
+    } catch (err) {
+      showToast(getApiErrorMessage(err), "danger")
     }
   }
 
@@ -62,7 +56,9 @@ export default function MyListsPage() {
           { href: "/search", label: "Buscar listas" },
           { href: "/create-list", label: "Criar lista" },
         ]}
-        action={{ href: "#", label: "Sair", variant: "secondary", onClick: handleLogout }}
+        user={user}
+        onLogout={user ? logout : undefined}
+        action={user ? undefined : { href: "/login", label: "Entrar", variant: "secondary" }}
       />
       <main className="mx-auto max-w-[var(--container-max)] space-y-8 px-4 py-10 sm:px-6">
         <header className="flex flex-wrap items-center justify-between gap-4">

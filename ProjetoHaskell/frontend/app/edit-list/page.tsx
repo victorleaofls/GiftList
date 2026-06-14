@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import { Suspense, useMemo } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 
 import { ListForm, buildListPayload } from "@/components/forms/ListForm"
@@ -10,8 +10,17 @@ import type { ListFormValues } from "@/components/forms/ListForm"
 import { useList } from "@/hooks/useList"
 import { useToast } from "@/hooks/useToast"
 import { updateList } from "@/services/listsService"
+import { getApiErrorMessage } from "@/lib/errors"
 
 export default function EditListPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[var(--surface-warm)]"><p className="p-10 text-sm text-muted-foreground">Carregando...</p></div>}>
+      <EditListContent />
+    </Suspense>
+  )
+}
+
+function EditListContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const listId = searchParams.get("id") ?? "PRE-001"
@@ -41,8 +50,8 @@ export default function EditListPage() {
       await updateList({ ...payload, id: data.id })
       showToast("Lista atualizada.", "success")
       router.push("/my-lists")
-    } catch {
-      showToast("Nao foi possivel salvar as alteracoes.", "danger")
+    } catch (err) {
+      showToast(getApiErrorMessage(err), "danger")
     }
   }
 
@@ -92,3 +101,5 @@ export default function EditListPage() {
     </div>
   )
 }
+
+

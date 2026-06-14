@@ -8,6 +8,7 @@ import { TopNav } from "@/components/layout/TopNav"
 import { useToast } from "@/hooks/useToast"
 import { createList } from "@/services/listsService"
 import { getStoredUser } from "@/services/authService"
+import { getApiErrorMessage } from "@/lib/errors"
 
 export default function CreateListPage() {
   const router = useRouter()
@@ -20,8 +21,8 @@ export default function CreateListPage() {
       await createList(payload)
       showToast("Lista criada com sucesso!", "success")
       router.push("/my-lists")
-    } catch {
-      showToast("Nao foi possivel criar a lista.", "danger")
+    } catch (err) {
+      showToast(getApiErrorMessage(err), "danger")
     }
   }
 

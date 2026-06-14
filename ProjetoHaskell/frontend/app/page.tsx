@@ -1,9 +1,12 @@
+"use client"
+
 import Link from "next/link"
 
 import { FeatureCard } from "@/components/cards/FeatureCard"
 import { ScreenCard, type ScreenCardProps } from "@/components/cards/ScreenCard"
 import { TopNav } from "@/components/layout/TopNav"
 import { Button } from "@/components/ui/button"
+import { useAuth } from "@/hooks/useAuth"
 
 const features = [
   {
@@ -76,6 +79,8 @@ const screens: ScreenCardProps[] = [
 ]
 
 export default function Home() {
+  const { user, logout } = useAuth()
+
   return (
     <div className="min-h-screen bg-background">
       <TopNav
@@ -83,7 +88,9 @@ export default function Home() {
           { href: "/search", label: "Buscar listas" },
           { href: "/my-lists", label: "Minhas listas" },
         ]}
-        action={{ href: "/login", label: "Entrar" }}
+        user={user}
+        onLogout={user ? logout : undefined}
+        action={user ? undefined : { href: "/login", label: "Entrar" }}
       />
       <main>
         <section className="relative overflow-hidden bg-[radial-gradient(circle_at_top,#fff4d8,#ffffff_55%)]">

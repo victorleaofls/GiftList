@@ -1,7 +1,10 @@
+"use client"
+
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import type { AuthUser } from "@/types/auth"
 
 type NavLink = {
   href: string
@@ -20,9 +23,11 @@ type TopNavProps = {
   action?: NavAction
   backLink?: NavLink
   className?: string
+  user?: AuthUser | null
+  onLogout?: () => void
 }
 
-export function TopNav({ links = [], action, backLink, className }: TopNavProps) {
+export function TopNav({ links = [], action, backLink, className, user, onLogout }: TopNavProps) {
   return (
     <nav
       className={cn(
@@ -54,27 +59,47 @@ export function TopNav({ links = [], action, backLink, className }: TopNavProps)
             </div>
           ) : null}
         </div>
-        {action ? (
-          action.onClick ? (
-            <Button
-              variant={action.variant ?? "default"}
-              size="sm"
-              className="rounded-full px-5"
-              onClick={action.onClick}
-            >
-              {action.label}
-            </Button>
+        <div className="flex items-center gap-3">
+          {user ? (
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-muted-foreground">
+                Ola, <span className="font-medium text-foreground">{user.name.split(" ")[0]}</span>
+              </span>
+              {onLogout ? (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="rounded-full px-5"
+                  onClick={onLogout}
+                >
+                  Sair
+                </Button>
+              ) : null}
+            </div>
           ) : (
-            <Button
-              asChild
-              variant={action.variant ?? "default"}
-              size="sm"
-              className="rounded-full px-5"
-            >
-              <Link href={action.href}>{action.label}</Link>
-            </Button>
-          )
-        ) : null}
+            action ? (
+              action.onClick ? (
+                <Button
+                  variant={action.variant ?? "default"}
+                  size="sm"
+                  className="rounded-full px-5"
+                  onClick={action.onClick}
+                >
+                  {action.label}
+                </Button>
+              ) : (
+                <Button
+                  asChild
+                  variant={action.variant ?? "default"}
+                  size="sm"
+                  className="rounded-full px-5"
+                >
+                  <Link href={action.href}>{action.label}</Link>
+                </Button>
+              )
+            ) : null
+          )}
+        </div>
       </div>
     </nav>
   )
