@@ -11,7 +11,7 @@ type CadastroResponse = {
 
 type UsuarioResponse = {
   usuarioId: number
-  usuarioNome: string
+  nome: string
 }
 
 const USER_KEY = "giftlist_user"
@@ -78,7 +78,7 @@ export async function login(payload: LoginPayload): Promise<AuthUser> {
 
   const usuario = await fetchUsuario(userId)
 
-  let userName = usuario.usuarioNome
+  let userName = usuario.nome
   if (!userName || userName.trim().length === 0) {
     userName = payload.email.split("@")[0]
   }
@@ -109,7 +109,8 @@ export async function register(payload: RegisterPayload): Promise<AuthUser> {
   try {
     const user = await login({ email: payload.email, password: payload.password })
     return user
-  } catch {
+  } catch (loginErr) {
+    console.warn("[register] login falhou apos cadastro:", loginErr)
     const user = {
       id: response.usuarioId,
       name: nomeCompleto,
