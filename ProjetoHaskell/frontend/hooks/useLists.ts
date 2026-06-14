@@ -28,22 +28,25 @@ export function useLists(query: string) {
 
   useEffect(() => {
     let active = true
-    setIsLoading(true)
 
-    getPublicLists(query)
-      .then((lists) => {
+    const loadLists = async () => {
+      setIsLoading(true)
+
+      try {
+        const lists = await getPublicLists(query)
         if (!active) return
         setData(lists.map(toSummary))
         setError(null)
-      })
-      .catch(() => {
+      } catch {
         if (!active) return
         setError("Nao foi possivel carregar as listas.")
-      })
-      .finally(() => {
+      } finally {
         if (!active) return
         setIsLoading(false)
-      })
+      }
+    }
+
+    void loadLists()
 
     return () => {
       active = false

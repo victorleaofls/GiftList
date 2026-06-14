@@ -35,22 +35,25 @@ export function useMyLists() {
 
   useEffect(() => {
     let active = true
-    setIsLoading(true)
 
-    getMyLists()
-      .then((lists) => {
+    const loadLists = async () => {
+      setIsLoading(true)
+
+      try {
+        const lists = await getMyLists()
         if (!active) return
         setData(lists.map(toSummary))
         setError(null)
-      })
-      .catch(() => {
+      } catch {
         if (!active) return
         setError("Nao foi possivel carregar suas listas.")
-      })
-      .finally(() => {
+      } finally {
         if (!active) return
         setIsLoading(false)
-      })
+      }
+    }
+
+    void loadLists()
 
     return () => {
       active = false

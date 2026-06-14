@@ -1,1 +1,4 @@
 packages: .
+
+package wai-app-static
+  flags: -crypton

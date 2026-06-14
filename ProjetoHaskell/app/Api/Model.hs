@@ -1,9 +1,11 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DuplicateRecordFields #-}
 module Api.Model where
 
 import Data.Aeson
 import Data.Char (toLower)
 import Data.List (stripPrefix)
+import Data.Time (Day)
 import GHC.Generics
 
 data Calculadora = Calculadora {
@@ -83,3 +85,65 @@ data UsuarioResponse = UsuarioResponse {
 
 instance ToJSON UsuarioResponse where
     toJSON = genericToJSON (jsonOptions "usuario")
+
+data GiftItemRequest = GiftItemRequest {
+    giftItemName :: String,
+    giftItemImage :: Maybe String,
+    giftItemPrice :: Double
+} deriving (Show, Generic)
+
+instance FromJSON GiftItemRequest where
+    parseJSON = genericParseJSON (jsonOptions "giftItem")
+
+data GiftListRequest = GiftListRequest {
+    giftListName :: String,
+    giftListDesc :: String,
+    giftListDate :: Maybe String,
+    giftListPixEligible :: Maybe Bool,
+    giftListItems :: [GiftItemRequest]
+} deriving (Show, Generic)
+
+instance FromJSON GiftListRequest where
+    parseJSON = genericParseJSON (jsonOptions "giftList")
+
+data GiftItemResponse = GiftItemResponse {
+    giftItemId :: Int,
+    giftItemName :: String,
+    giftItemPrice :: Double,
+    giftItemRaised :: Double,
+    giftItemImage :: Maybe String
+} deriving (Show, Generic)
+
+instance ToJSON GiftItemResponse where
+    toJSON = genericToJSON (jsonOptions "giftItem")
+
+data GiftListResponse = GiftListResponse {
+    giftListId :: Int,
+    giftListName :: String,
+    giftListOwner :: String,
+    giftListDesc :: String,
+    giftListDate :: Maybe String,
+    giftListCreatedAt :: String,
+    giftListPixEligible :: Bool,
+    giftListItems :: [GiftItemResponse]
+} deriving (Show, Generic)
+
+instance ToJSON GiftListResponse where
+    toJSON = genericToJSON (jsonOptions "giftList")
+
+data ContributionRequest = ContributionRequest {
+    contributionAmount :: Double
+} deriving (Show, Generic)
+
+instance FromJSON ContributionRequest where
+    parseJSON = genericParseJSON (jsonOptions "contribution")
+
+data ContributionResponse = ContributionResponse {
+    contributionId :: Int,
+    contributionPaymentLink :: String,
+    contributionQrCode :: String,
+    contributionAmount :: Double
+} deriving (Show, Generic)
+
+instance ToJSON ContributionResponse where
+    toJSON = genericToJSON (jsonOptions "contribution")

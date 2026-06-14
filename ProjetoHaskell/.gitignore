@@ -1,0 +1,7 @@
+dist-newstyle/
+.next/
+node_modules/
+*.hi
+*.o
+*.so
+*.a

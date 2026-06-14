@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button"
 import { useMyLists, type MyListSummary } from "@/hooks/useMyLists"
 import { useToast } from "@/hooks/useToast"
 import { deleteList } from "@/services/listsService"
+import { clearAuthToken } from "@/lib/api"
 
 export default function MyListsPage() {
   const { data, isLoading, error } = useMyLists()
@@ -20,16 +21,38 @@ export default function MyListsPage() {
   const { toast, showToast } = useToast()
 
   useEffect(() => {
-    setLists(data)
+    let active = true
+
+    void Promise.resolve().then(() => {
+      if (active) {
+        setLists(data)
+      }
+    })
+
+    return () => {
+      active = false
+    }
   }, [data])
 
   const handleDelete = async () => {
     if (!deleteTarget) return
 
-    await deleteList(deleteTarget.id)
-    setLists((prev) => prev.filter((list) => list.id !== deleteTarget.id))
-    showToast("Lista excluida.", "success")
-    setDeleteTarget(null)
+    try {
+      await deleteList(deleteTarget.id)
+      setLists((prev) => prev.filter((list) => list.id !== deleteTarget.id))
+      showToast("Lista excluida.", "success")
+      setDeleteTarget(null)
+    } catch {
+      showToast("Nao foi possivel excluir a lista.", "danger")
+    }
+  }
+
+  const handleLogout = () => {
+    clearAuthToken()
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem("giftlist_user")
+      window.location.href = "/login"
+    }
   }
 
   return (
@@ -39,7 +62,7 @@ export default function MyListsPage() {
           { href: "/search", label: "Buscar listas" },
           { href: "/create-list", label: "Criar lista" },
         ]}
-        action={{ href: "/login", label: "Sair", variant: "secondary" }}
+        action={{ href: "#", label: "Sair", variant: "secondary", onClick: handleLogout }}
       />
       <main className="mx-auto max-w-[var(--container-max)] space-y-8 px-4 py-10 sm:px-6">
         <header className="flex flex-wrap items-center justify-between gap-4">

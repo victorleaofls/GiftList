@@ -14,6 +14,26 @@ type UsuarioResponse = {
   usuarioNome: string
 }
 
+const USER_KEY = "giftlist_user"
+
+export const getStoredUser = (): AuthUser | null => {
+  if (typeof window === "undefined") return null
+
+  const raw = window.localStorage.getItem(USER_KEY)
+  if (!raw) return null
+
+  try {
+    return JSON.parse(raw) as AuthUser
+  } catch {
+    return null
+  }
+}
+
+const setStoredUser = (user: AuthUser) => {
+  if (typeof window === "undefined") return
+  window.localStorage.setItem(USER_KEY, JSON.stringify(user))
+}
+
 const decodeJwtSub = (token: string): number | null => {
   const raw = token.startsWith("Bearer ") ? token.slice(7) : token
   const parts = raw.split(".")
@@ -58,11 +78,14 @@ export async function login(payload: LoginPayload): Promise<AuthUser> {
 
   const usuario = await fetchUsuario(userId)
 
-  return {
+  const user = {
     id: usuario.usuarioId,
     name: usuario.usuarioNome,
     email: payload.email,
   }
+
+  setStoredUser(user)
+  return user
 }
 
 export async function register(payload: RegisterPayload): Promise<AuthUser> {
@@ -78,9 +101,12 @@ export async function register(payload: RegisterPayload): Promise<AuthUser> {
     },
   })
 
-  return {
+  const user = {
     id: response.usuarioId,
     name: nomeCompleto,
     email: payload.email,
   }
+
+  setStoredUser(user)
+  return user
 }

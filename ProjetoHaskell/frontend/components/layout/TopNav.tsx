@@ -12,6 +12,7 @@ type NavAction = {
   href: string
   label: string
   variant?: "default" | "secondary" | "outline"
+  onClick?: () => void
 }
 
 type TopNavProps = {
@@ -54,14 +55,25 @@ export function TopNav({ links = [], action, backLink, className }: TopNavProps)
           ) : null}
         </div>
         {action ? (
-          <Button
-            asChild
-            variant={action.variant ?? "default"}
-            size="sm"
-            className="rounded-full px-5"
-          >
-            <Link href={action.href}>{action.label}</Link>
-          </Button>
+          action.onClick ? (
+            <Button
+              variant={action.variant ?? "default"}
+              size="sm"
+              className="rounded-full px-5"
+              onClick={action.onClick}
+            >
+              {action.label}
+            </Button>
+          ) : (
+            <Button
+              asChild
+              variant={action.variant ?? "default"}
+              size="sm"
+              className="rounded-full px-5"
+            >
+              <Link href={action.href}>{action.label}</Link>
+            </Button>
+          )
         ) : null}
       </div>
     </nav>

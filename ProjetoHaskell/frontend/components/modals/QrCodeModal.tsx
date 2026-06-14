@@ -28,6 +28,9 @@ export function QrCodeModal({
   link,
 }: QrCodeModalProps) {
   const [copied, setCopied] = useState(false)
+  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(
+    link
+  )}`
 
   const handleCopy = async () => {
     try {
@@ -47,9 +50,11 @@ export function QrCodeModal({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <div className="rounded-2xl border border-border bg-muted p-6 text-center">
-          <div className="mx-auto flex h-40 w-40 items-center justify-center rounded-xl border border-dashed border-border bg-background text-xs text-muted-foreground">
-            QR Code
-          </div>
+          <img
+            src={qrSrc}
+            alt="QR Code da lista"
+            className="mx-auto h-40 w-40 rounded-xl border border-border bg-background"
+          />
           <p className="mt-4 break-all text-xs text-muted-foreground">{link}</p>
         </div>
         <DialogFooter>

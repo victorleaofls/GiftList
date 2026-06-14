@@ -25,6 +25,7 @@ executable projetoHello
                       Services.AuthService
                       Handlers.HandlerLogin
                       Handlers.HandlerCadastro
+                      Handlers.HandlerLista
                       Handlers.HandlerUsuario
     -- other-extensions:
     build-depends:    base,
@@ -42,6 +43,7 @@ executable projetoHello
                       jwt,
                       text,
                       time,
-                      memory
+                      memory,
+                      http-types
     hs-source-dirs:   app
     default-language: Haskell2010

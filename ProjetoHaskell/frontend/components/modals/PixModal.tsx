@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -35,13 +35,14 @@ type PixModalProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   item: GiftItem | null
-  onConfirm: (value: number) => void
+  onConfirm: (value: number) => Promise<void> | void
 }
 
 const formatMoney = (value: number) =>
   value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
 
 export function PixModal({ open, onOpenChange, item, onConfirm }: PixModalProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const remaining = useMemo(() => {
     if (!item) return 0
     return Math.max(0, item.price - item.raised)
@@ -56,9 +57,14 @@ export function PixModal({ open, onOpenChange, item, onConfirm }: PixModalProps)
     form.reset({ amount: remaining || 1 })
   }, [form, remaining])
 
-  const handleSubmit = (values: PixValues) => {
-    onConfirm(values.amount)
-    onOpenChange(false)
+  const handleSubmit = async (values: PixValues) => {
+    setIsSubmitting(true)
+    try {
+      await onConfirm(values.amount)
+      onOpenChange(false)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -97,13 +103,15 @@ export function PixModal({ open, onOpenChange, item, onConfirm }: PixModalProps)
               )}
             />
             <div className="rounded-lg border border-border bg-background p-3 text-xs text-muted-foreground">
-              Chave Pix: presentea@pix.com
+              A contribuicao sera registrada e o link de pagamento sera gerado ao confirmar.
             </div>
             <DialogFooter>
               <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
                 Cancelar
               </Button>
-              <Button type="submit">Copiar chave Pix</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Processando..." : "Confirmar contribuicao"}
+              </Button>
             </DialogFooter>
           </form>
         </Form>

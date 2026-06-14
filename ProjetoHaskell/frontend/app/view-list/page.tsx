@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { Copy, QrCode } from "lucide-react"
 
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button"
 import { useList } from "@/hooks/useList"
 import { useToast } from "@/hooks/useToast"
 import type { GiftItem } from "@/types/list"
+import { contributeToItem } from "@/services/listsService"
 
 const formatMoney = (value: number) =>
   value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
@@ -30,26 +31,41 @@ export default function ViewListPage() {
   const listId = searchParams.get("id") ?? "PRE-001"
   const { data, isLoading, error } = useList(listId)
   const { toast, showToast } = useToast()
+  const [currentList, setCurrentList] = useState(data)
   const [pixItem, setPixItem] = useState<GiftItem | null>(null)
   const [pixOpen, setPixOpen] = useState(false)
   const [qrOpen, setQrOpen] = useState(false)
 
+  useEffect(() => {
+    let active = true
+
+    void Promise.resolve().then(() => {
+      if (active) {
+        setCurrentList(data)
+      }
+    })
+
+    return () => {
+      active = false
+    }
+  }, [data])
+
   const stats = useMemo(() => {
-    if (!data) {
+    if (!currentList) {
       return { total: 0, raised: 0, progress: 0 }
     }
 
-    const total = data.items.reduce((sum, item) => sum + item.price, 0)
-    const raised = data.items.reduce((sum, item) => sum + item.raised, 0)
+    const total = currentList.items.reduce((sum, item) => sum + item.price, 0)
+    const raised = currentList.items.reduce((sum, item) => sum + item.raised, 0)
     const progress = total > 0 ? Math.round((raised / total) * 100) : 0
 
     return { total, raised, progress }
-  }, [data])
+  }, [currentList])
 
   const handleCopyLink = async () => {
-    if (!data) return
+    if (!currentList) return
 
-    const link = buildLink(data.id)
+    const link = buildLink(currentList.id)
 
     try {
       await navigator.clipboard.writeText(link)
@@ -64,8 +80,30 @@ export default function ViewListPage() {
     setPixOpen(true)
   }
 
-  const handleConfirmPix = (amount: number) => {
-    showToast(`Pix de ${formatMoney(amount)} pronto para pagamento.`, "success")
+  const handleConfirmPix = async (amount: number) => {
+    if (!currentList || !pixItem) return
+
+    try {
+      const response = await contributeToItem(currentList.id, pixItem.id, amount)
+
+      setCurrentList((prev) =>
+        prev
+          ? {
+              ...prev,
+              items: prev.items.map((item) =>
+                item.id === pixItem.id
+                  ? { ...item, raised: Math.min(item.price, item.raised + amount) }
+                  : item
+              ),
+            }
+          : prev
+      )
+
+      await navigator.clipboard.writeText(response.paymentLink)
+      showToast("Contribuicao registrada e link copiado.", "success")
+    } catch {
+      showToast("Nao foi possivel registrar a contribuicao.", "danger")
+    }
   }
 
   if (isLoading) {
@@ -79,7 +117,7 @@ export default function ViewListPage() {
     )
   }
 
-  if (error || !data) {
+  if (error || !currentList) {
     return (
       <div className="min-h-screen bg-background">
         <TopNav links={[{ href: "/search", label: "Buscar listas" }]} />
@@ -103,15 +141,15 @@ export default function ViewListPage() {
         <section className="grid gap-6 lg:grid-cols-[2fr,1fr]">
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="secondary">{data.id}</Badge>
-              {data.pixEligible ? <Badge variant="success">Pix</Badge> : null}
+              <Badge variant="secondary">{currentList.id}</Badge>
+              {currentList.pixEligible ? <Badge variant="success">Pix</Badge> : null}
             </div>
-            <h1 className="text-3xl font-semibold">{data.name}</h1>
-            <p className="text-sm text-muted-foreground">por {data.owner}</p>
-            <p className="text-sm text-muted-foreground">{data.desc}</p>
+            <h1 className="text-3xl font-semibold">{currentList.name}</h1>
+            <p className="text-sm text-muted-foreground">por {currentList.owner}</p>
+            <p className="text-sm text-muted-foreground">{currentList.desc}</p>
             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-              <span>{data.items.length} presentes</span>
-              {data.date ? <span>Data: {data.date}</span> : null}
+              <span>{currentList.items.length} presentes</span>
+              {currentList.date ? <span>Data: {currentList.date}</span> : null}
             </div>
             <div className="flex flex-wrap gap-3">
               <Button size="sm" onClick={() => setQrOpen(true)}>
@@ -147,7 +185,7 @@ export default function ViewListPage() {
           </div>
         </section>
         <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {data.items.map((item) => (
+          {currentList.items.map((item) => (
             <ProductCard key={item.id} item={item} onContribute={handleContribute} />
           ))}
         </section>
@@ -161,9 +199,9 @@ export default function ViewListPage() {
       <QrCodeModal
         open={qrOpen}
         onOpenChange={setQrOpen}
-        title={`QR Code - ${data.name}`}
+        title={`QR Code - ${currentList.name}`}
         description="Compartilhe esta lista com amigos."
-        link={buildLink(data.id)}
+        link={buildLink(currentList.id)}
       />
       <Toast toast={toast} />
     </div>

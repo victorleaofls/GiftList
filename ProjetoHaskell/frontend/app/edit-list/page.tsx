@@ -36,10 +36,14 @@ export default function EditListPage() {
   const handleSubmit = async (values: ListFormValues) => {
     if (!data) return
 
-    const payload = buildListPayload(values, data.owner)
-    await updateList({ ...payload, id: data.id })
-    showToast("Lista atualizada.", "success")
-    router.push("/my-lists")
+    try {
+      const payload = buildListPayload(values, data.owner)
+      await updateList({ ...payload, id: data.id })
+      showToast("Lista atualizada.", "success")
+      router.push("/my-lists")
+    } catch {
+      showToast("Nao foi possivel salvar as alteracoes.", "danger")
+    }
   }
 
   if (isLoading) {

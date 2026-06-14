@@ -7,16 +7,22 @@ import { Toast } from "@/components/feedback/Toast"
 import { TopNav } from "@/components/layout/TopNav"
 import { useToast } from "@/hooks/useToast"
 import { createList } from "@/services/listsService"
+import { getStoredUser } from "@/services/authService"
 
 export default function CreateListPage() {
   const router = useRouter()
   const { toast, showToast } = useToast()
+  const currentUser = getStoredUser()
 
   const handleSubmit = async (values: Parameters<typeof buildListPayload>[0]) => {
-    const payload = buildListPayload(values, "Ana Silva")
-    await createList(payload)
-    showToast("Lista criada com sucesso!", "success")
-    router.push("/my-lists")
+    try {
+      const payload = buildListPayload(values, currentUser?.name ?? "Usuario")
+      await createList(payload)
+      showToast("Lista criada com sucesso!", "success")
+      router.push("/my-lists")
+    } catch {
+      showToast("Nao foi possivel criar a lista.", "danger")
+    }
   }
 
   return (

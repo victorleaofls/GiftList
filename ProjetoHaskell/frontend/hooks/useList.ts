@@ -11,28 +11,30 @@ export function useList(id?: string | null) {
   useEffect(() => {
     let active = true
 
-    if (!id) {
-      setData(null)
-      setIsLoading(false)
-      return
-    }
+    const loadList = async () => {
+      if (!id) {
+        setData(null)
+        setIsLoading(false)
+        return
+      }
 
-    setIsLoading(true)
+      setIsLoading(true)
 
-    getListById(id)
-      .then((list) => {
+      try {
+        const list = await getListById(id)
         if (!active) return
         setData(list)
         setError(list ? null : "Lista nao encontrada.")
-      })
-      .catch(() => {
+      } catch {
         if (!active) return
         setError("Nao foi possivel carregar esta lista.")
-      })
-      .finally(() => {
+      } finally {
         if (!active) return
         setIsLoading(false)
-      })
+      }
+    }
+
+    void loadList()
 
     return () => {
       active = false
