@@ -63,7 +63,7 @@ export function TopNav({ links = [], action, backLink, className, user, onLogout
           {user ? (
             <div className="flex items-center gap-3">
               <span className="text-sm text-muted-foreground">
-                Ola, <span className="font-medium text-foreground">{user.name.split(" ")[0]}</span>
+                Ola, <span className="font-medium text-foreground">{(user.name || user.email || "Usuario").split(" ")[0]}</span>
               </span>
               {onLogout ? (
                 <Button

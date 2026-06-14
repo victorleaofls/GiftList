@@ -78,9 +78,14 @@ export async function login(payload: LoginPayload): Promise<AuthUser> {
 
   const usuario = await fetchUsuario(userId)
 
+  let userName = usuario.usuarioNome
+  if (!userName || userName.trim().length === 0) {
+    userName = payload.email.split("@")[0]
+  }
+
   const user = {
     id: usuario.usuarioId,
-    name: usuario.usuarioNome,
+    name: userName,
     email: payload.email,
   }
 
