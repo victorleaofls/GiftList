@@ -22,7 +22,7 @@ main = do
     let connStr = case mConnStr of
             Just cs -> cs
             Nothing -> "host=postgres port=5432 dbname=haskads user=haskads_user password=haskads_password sslmode=disable"
-    conn <- connectPostgreSQL connStr
+    conn <- connectPostgreSQL (BS.pack connStr)
 
     runMigration conn "migration.sql"
 
