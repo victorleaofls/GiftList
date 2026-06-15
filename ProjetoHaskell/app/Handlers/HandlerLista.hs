@@ -121,10 +121,15 @@ handlerExcluirLista conn listId mAuth = do
             _ <- liftIO $ execute conn "DELETE FROM Lista WHERE id = ?" (Only listId)
             pure NoContent
 
-handlerContribuirItem :: Connection -> Int -> Int -> M.ContributionRequest -> Handler M.ContributionResponse
-handlerContribuirItem conn listId itemId (M.ContributionRequest amount) = do
+handlerContribuirItem :: Connection -> Int -> Int -> Maybe String -> M.ContributionRequest -> Handler M.ContributionResponse
+handlerContribuirItem conn listId itemId mAuth (M.ContributionRequest amount) = do
     when (amount <= 0) $
         throwError err400 { errBody = "Valor invalido" }
+    maybeUserId <- case mAuth of
+        Nothing -> pure Nothing
+        Just auth -> do
+            uid <- liftIO $ validateToken auth
+            maybe (throwError err401 { errBody = "Token invalido" }) (pure . Just) uid
     rows <- liftIO $ (query conn "SELECT id, preco, arrecadado FROM ListaItem WHERE id = ? AND lista_id = ?" (itemId, listId) :: IO [(Int, Double, Double)])
     case rows of
         [(foundItemId, price, raised)] -> do
@@ -132,7 +137,7 @@ handlerContribuirItem conn listId itemId (M.ContributionRequest amount) = do
                 throwError err400 { errBody = "Valor maior que o restante disponivel" }
             _ <- liftIO $ execute conn
                 "INSERT INTO Contribuicao (lista_item_id, usuario_id, valor) VALUES (?,?,?)"
-                (foundItemId, Nothing :: Maybe Int, amount)
+                (foundItemId, maybeUserId, amount)
             _ <- liftIO $ execute conn
                 "UPDATE ListaItem SET arrecadado = LEAST(preco, arrecadado + ?) WHERE id = ?"
                 (amount, foundItemId)
@@ -143,3 +148,9 @@ handlerContribuirItem conn listId itemId (M.ContributionRequest amount) = do
                 paymentLink = "https://giftlist.local/pix/lista/" ++ show listId ++ "/item/" ++ show itemId ++ "?amount=" ++ show amount
             pure $ M.ContributionResponse contribId paymentLink paymentLink amount
         _ -> throwError err404 { errBody = "Presente nao encontrado" }
+
+handlerListarContribuicoes :: Connection -> Int -> Handler [M.ContributionDetailResponse]
+handlerListarContribuicoes conn listId = do
+    rows <- liftIO (query conn "SELECT c.id, u.nome_completo, i.imagem, i.nome, c.valor, to_char(c.criado_em, 'YYYY-MM-DD') FROM Contribuicao as c LEFT JOIN Usuario as u ON c.usuario_id = u.id LEFT JOIN ListaItem as i ON c.lista_item_id = i.id WHERE i.lista_id = ?" (Only listId) :: IO [(Int, Maybe String, Maybe String, Maybe String, Double, String)])
+    pure $ map (\(cid, userName, itemImage, itemName, amount, createdAt) ->
+        M.ContributionDetailResponse cid userName itemImage itemName amount createdAt) rows

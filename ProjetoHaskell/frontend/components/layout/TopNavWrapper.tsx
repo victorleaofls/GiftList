@@ -11,6 +11,7 @@ export function TopNavWrapper() {
       links={[
         { href: "/search", label: "Buscar listas" },
         { href: "/create-list", label: "Criar lista" },
+        { href: "/my-lists", label: "Minhas listas" },
       ]}
       user={user}
       onLogout={user ? logout : undefined}

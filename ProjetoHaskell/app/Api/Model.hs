@@ -147,3 +147,26 @@ data ContributionResponse = ContributionResponse {
 
 instance ToJSON ContributionResponse where
     toJSON = genericToJSON (jsonOptions "contribution")
+
+data ContributionInfo = ContributionInfo {
+    contributionInfoId :: Int,
+    contributionInfoListId :: Int,
+    contributionInfoItemId :: Int,
+    contributionInfoAmount :: Double
+} deriving (Show, Generic)
+
+data ContributionDetailResponse = ContributionDetailResponse {
+    contributionDetailId :: Int,
+    contributionDetailNomeCompleto :: Maybe String,
+    contributionDetailImage :: Maybe String,
+    contributionDetailItemName :: Maybe String,
+    contributionDetailAmount :: Double,
+    contributionDetailDate :: String
+} deriving (Show, Generic)
+
+instance ToJSON ContributionDetailResponse where
+    toJSON = genericToJSON (jsonOptions "contributionDetail")
+
+data ContributionListResponse = ContributionListResponse {
+    contributions :: [ContributionInfo]
+} deriving (Show, Generic)

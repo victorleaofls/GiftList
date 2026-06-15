@@ -42,7 +42,8 @@ type API =
     :<|> "listas" :> Capture "id" Int :> Header "Authorization" String :> DeleteNoContent
     :<|> "listas" :> "minhas" :> Header "Authorization" String :> Get '[JSON] [GiftListResponse]
     :<|> "listas" :> Capture "listId" Int :> "itens" :> Capture "itemId" Int :> "contribuir" :> Verb 'OPTIONS 200 '[JSON] ()
-    :<|> "listas" :> Capture "listId" Int :> "itens" :> Capture "itemId" Int :> "contribuir" :> ReqBody '[JSON] ContributionRequest :> Post '[JSON] ContributionResponse
+    :<|> "listas" :> Capture "listId" Int :> "itens" :> Capture "itemId" Int :> "contribuir" :> Header "Authorization" String :> ReqBody '[JSON] ContributionRequest :> Post '[JSON] ContributionResponse
+    :<|> "listas" :> Capture "listId" Int :> "contribuicoes" :> Get '[JSON] [ContributionDetailResponse]
 
 handlerClienteTodos :: Connection -> Handler ClienteResponse
 handlerClienteTodos conn = do 
@@ -101,6 +102,7 @@ server conn = handlerHello
             :<|> Lista.handlerMinhasListas conn
             :<|> optionsWithListAndItemId
             :<|> Lista.handlerContribuirItem conn
+            :<|> Lista.handlerListarContribuicoes conn
 
 addCorsHeader :: Middleware
 addCorsHeader app' req resp =

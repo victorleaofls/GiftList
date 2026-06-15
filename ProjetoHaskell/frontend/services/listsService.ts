@@ -22,6 +22,15 @@ type ContributionResponse = {
   amount: number
 }
 
+export type ContributionListResponse = {
+  id: number
+  nomeCompleto: string
+  image: string
+  itemName: string
+  amount: number
+  date: string
+}
+
 const toPayload = (payload: GiftList): GiftListInput => ({
   name: payload.name,
   desc: payload.desc,
@@ -83,6 +92,13 @@ export async function contributeToItem(
 ): Promise<ContributionResponse> {
   return apiRequest<ContributionResponse>(`/listas/${listId}/itens/${itemId}/contribuir`, {
     method: "POST",
+    headers: buildAuthHeaders(),
     body: { amount },
+  })
+}
+
+export async function getContributions(listId: string): Promise<ContributionListResponse[]> {
+  return apiRequest<ContributionListResponse[]>(`/listas/${listId}/contribuicoes`, {
+    headers: buildAuthHeaders(),
   })
 }

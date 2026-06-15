@@ -28,6 +28,7 @@ export function QrCodeModal({
   link,
 }: QrCodeModalProps) {
   const [copied, setCopied] = useState(false)
+  const isloading = !link
   const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(
     link
   )}`
@@ -50,11 +51,15 @@ export function QrCodeModal({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <div className="rounded-2xl border border-border bg-muted p-6 text-center">
+          {isloading ? (
+            <p className="text-sm text-muted-foreground">Gerando QR Code...</p>
+          ) : (
           <img
             src={qrSrc}
             alt="QR Code da lista"
             className="mx-auto h-40 w-40 rounded-xl border border-border bg-background"
           />
+          )}
           <p className="mt-4 break-all text-xs text-muted-foreground">{link}</p>
         </div>
         <DialogFooter>

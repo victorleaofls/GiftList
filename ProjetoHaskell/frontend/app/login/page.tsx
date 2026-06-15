@@ -27,7 +27,7 @@ export default function LoginPage() {
             </p>
           </div>
         </section>
-        <section className="relative hidden items-center justify-center overflow-hidden bg-[linear-gradient(145deg,#d4a373,#c47a5a)] text-white lg:flex">
+        <section className="relative hidden items-center justify-center overflow-hidden bg-[linear-gradient(145deg,#ff385db2,#ff385c)] text-white lg:flex">
           <div className="absolute -left-20 -top-16 h-48 w-48 rounded-full bg-white/10 blur-3xl" />
           <div className="absolute -bottom-20 right-0 h-52 w-52 rounded-full bg-white/15 blur-3xl" />
           <div className="relative z-10 max-w-sm space-y-4 text-center">
@@ -36,9 +36,6 @@ export default function LoginPage() {
               Crie listas de presentes e receba contribuicoes via Pix com
               praticidade.
             </p>
-            <Button asChild variant="secondary">
-              <Link href="/create-list">Criar lista gratis</Link>
-            </Button>
           </div>
         </section>
       </main>

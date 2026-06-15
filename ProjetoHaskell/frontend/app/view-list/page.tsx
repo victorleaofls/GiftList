@@ -14,6 +14,9 @@ import { useList } from "@/hooks/useList"
 import { useToast } from "@/hooks/useToast"
 import type { GiftItem } from "@/types/list"
 import { contributeToItem } from "@/services/listsService"
+import { useAuth } from "@/hooks/useAuth"
+import { ContributionsModal } from "@/components/modals/ContributionsModal"
+import { useContributionLists } from "@/hooks/useContributionLists"
 
 const formatMoney = (value: number) =>
   value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
@@ -42,6 +45,9 @@ function ViewListContent() {
   const [pixItem, setPixItem] = useState<GiftItem | null>(null)
   const [pixOpen, setPixOpen] = useState(false)
   const [qrOpen, setQrOpen] = useState(false)
+  const [contributionsOpen, setContributionsOpen] = useState(false)
+  const { user } = useAuth()
+  const { refetch } = useContributionLists(listId)
 
   useEffect(() => {
     let active = true
@@ -161,6 +167,8 @@ function ViewListContent() {
             </div>
           </div>
           <div className="rounded-2xl border border-border bg-background p-6 shadow-sm">
+            <div className="flex flex-wrap justify-between">
+              <div>
                 <p className="text-xs font-semibold uppercase text-muted-foreground">
                   Arrecadacao
                 </p>
@@ -168,6 +176,15 @@ function ViewListContent() {
                 <p className="text-sm text-muted-foreground">
                   de {formatMoney(stats.total)} ({stats.progress}%)
                 </p>
+              </div>
+              {!!user &&(
+                <Button className="rounded-full w-full lg:w-fit mt-4 lg:mt-0"
+                  onClick={() => setContributionsOpen(true)}
+                >
+                  Ver lista de contribuições
+                </Button>
+              )}
+            </div>
             <div className="mt-4 rounded-full bg-muted">
               <div
                 className="h-2 rounded-full bg-primary"
@@ -188,6 +205,11 @@ function ViewListContent() {
           ))}
         </section>
       </main>
+      <ContributionsModal
+        open={contributionsOpen}
+        onOpenChange={setContributionsOpen}
+        listId={currentList.id}
+      />
       <PixModal
         open={pixOpen}
         onOpenChange={setPixOpen}

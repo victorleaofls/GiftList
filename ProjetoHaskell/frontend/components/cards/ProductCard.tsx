@@ -18,7 +18,11 @@ export function ProductCard({ item, onContribute }: ProductCardProps) {
   return (
     <Card className="h-full overflow-hidden">
       <div className="flex h-36 items-center justify-center bg-muted text-base font-semibold text-muted-foreground">
-        {item.name.charAt(0)}
+        {item.image ? (
+          <img src={item.image} alt={item.name} className="h-full w-full object-contain" />
+        ) : (
+          "Sem imagem"
+        )}
       </div>
       <CardContent className="space-y-3 pt-4">
         <div>
