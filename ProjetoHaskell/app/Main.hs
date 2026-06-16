@@ -9,12 +9,11 @@ import System.Environment (lookupEnv)
 
 main :: IO ()
 main = do 
-    putStrLn "Servidor rodando na porta 8080"
-
     mConnStr <- lookupEnv "DATABASE_URL"
     let connStr = case mConnStr of
             Just cs -> cs
             Nothing -> "host=postgres port=5432 dbname=haskads user=haskads_user password=haskads_password sslmode=disable"
     conn <- connectPostgreSQL (BS.pack connStr)
 
-    run 8080 (app conn)
+    let settings = setBeforeMainLoop (putStrLn "Server running on port 8080") $ setPort 8080 defaultSettings
+    runSettings settings (app conn)

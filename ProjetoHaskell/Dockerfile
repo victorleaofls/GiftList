@@ -12,15 +12,12 @@ RUN apt-get update && \
 
 COPY projetoHello.cabal cabal.project LICENSE ./
 
-RUN --mount=type=cache,target=/root/.cabal \
-    --mount=type=cache,target=/root/.ghc \
-    cabal v2-update
-
 RUN mkdir -p app/Api app/Server && \
     touch app/Main.hs app/Api/Model.hs app/Server/Routes.hs CHANGELOG.md
 
 RUN --mount=type=cache,target=/root/.cabal \
     --mount=type=cache,target=/root/.ghc \
+    cabal v2-update && \
     cabal v2-build --only-dependencies
 
 COPY . .
