@@ -24,6 +24,7 @@ COPY . .
 
 RUN --mount=type=cache,target=/root/.cabal \
     --mount=type=cache,target=/root/.ghc \
+    cabal v2-update && \
     cabal v2-build exe:projetoHello
 
 FROM debian:bookworm-slim
