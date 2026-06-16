@@ -9,10 +9,10 @@ import Database.PostgreSQL.Simple.Types
 import qualified Data.ByteString.Char8 as BS
 import System.Environment (lookupEnv)
 
-runMigration :: Connection -> FilePath -> IO ()
-runMigration conn fp = do
-  sql <- readFile fp
-  void $ execute_ conn (Query $ BS.pack sql)
+-- runMigration :: Connection -> FilePath -> IO ()
+-- runMigration conn fp = do
+--   sql <- readFile fp
+--   void $ execute_ conn (Query $ BS.pack sql)
 
 main :: IO ()
 main = do 
@@ -24,6 +24,6 @@ main = do
             Nothing -> "host=postgres port=5432 dbname=haskads user=haskads_user password=haskads_password sslmode=disable"
     conn <- connectPostgreSQL (BS.pack connStr)
 
-    runMigration conn "migration.sql"
+    -- runMigration conn "migration.sql"
 
     run 8080 (app conn)
