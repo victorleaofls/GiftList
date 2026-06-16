@@ -1,5 +1,4 @@
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080"
+const API_BASE_URL = "https://giftlist-qvac.onrender.com"
 
 const TOKEN_KEY = "giftlist_token"
 
