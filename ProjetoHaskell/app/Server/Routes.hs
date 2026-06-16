@@ -110,7 +110,7 @@ addCorsHeader app' req resp =
         origin = case originHeader of
                     Just o -> o
                     Nothing -> ""
-        isAllowed = origin `elem` ["https://giftlist-qvac.onrender.com", "http://localhost:3000"]
+        isAllowed = origin `elem` ["https://giftlist-frontend-gold.vercel.app", "http://localhost:3000"]
     in if requestMethod req == "OPTIONS"
            then if isAllowed
                     then resp $ responseLBS status200
